@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mindset 1 – Tab 1 Sửa lỗi Task 1 · Tab 2 Chuẩn bị Task 2 | Hà My</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--primary:#08397A;--accent:#FFBD59;--bg:#F6F8FB;--card:#FFFFFF;--line:#E2E8F0;--text:#1E293B;--muted:#64748B;--ok:#15803D;--err:#B91C1C;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Mulish',system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.65;}
+  header.top{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(8,57,122,.06);}
+  .top-inner{max-width:900px;margin:0 auto;padding:12px 18px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;}
+  .top h1{font-size:17px;margin:0;color:var(--primary);font-weight:800;line-height:1.3;}
+  .goals{font-size:14px;color:var(--muted);margin:2px 0 0;}
+  .timer{display:flex;align-items:center;gap:6px;}
+  .clock{font-weight:800;font-size:22px;color:var(--primary);min-width:76px;text-align:center;font-variant-numeric:tabular-nums;}
+  .clock.low{color:var(--err);}
+  .progress-wrap{width:100%;}
+  .progress{height:8px;background:#E8EEF6;border-radius:99px;overflow:hidden;}
+  .progress > div{height:100%;width:0;background:var(--primary);transition:width .3s;}
+  .progress-label{font-size:13px;color:var(--muted);margin-top:3px;}
+  main{max-width:900px;margin:0 auto;padding:22px 18px 60px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 22px 18px;margin-bottom:22px;}
+  .card h2{margin:0 0 4px;color:var(--primary);font-size:20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .card h3{color:var(--primary);font-size:17px;margin:20px 0 6px;}
+  .badge{background:var(--accent);color:#3B2A06;font-size:13px;font-weight:800;padding:2px 10px;border-radius:99px;}
+  .tip{background:#FFF6E6;border-left:5px solid var(--accent);border-radius:8px;padding:10px 14px;margin:12px 0 16px;font-size:15px;}
+  .instr{color:var(--muted);font-size:15px;margin:4px 0 12px;}
+  .q{margin:14px 0;padding:12px 14px;border:1px solid var(--line);border-radius:10px;}
+  .q-title{font-weight:700;margin-bottom:8px;}
+  .opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin:6px 0;cursor:pointer;transition:all .15s;}
+  .opt:hover{border-color:var(--primary);}
+  .opt input{margin-top:5px;accent-color:var(--primary);}
+  .opt.sel{border-color:var(--primary);background:#EEF4FC;}
+  select,input[type=text],textarea{font-family:inherit;font-size:16px;border:1px solid #CBD5E1;border-radius:8px;padding:8px 10px;background:#fff;color:var(--text);}
+  select:focus,input[type=text]:focus,textarea:focus{outline:2px solid var(--accent);border-color:var(--primary);}
+  select{max-width:100%;}
+  input[type=text].wide,textarea{width:100%;}
+  textarea{min-height:64px;resize:vertical;line-height:1.55;}
+  table{border-collapse:collapse;width:100%;margin:8px 0;font-size:15px;}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;}
+  th{background:#EEF4FC;color:var(--primary);}
+  .row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:8px 0;}
+  .row .lbl{min-width:240px;font-weight:600;}
+  .model{background:#F8FAFD;border:1px dashed #9FB3CF;border-radius:10px;padding:14px 16px;font-size:16px;}
+  .prompt-box{background:#EEF4FC;border-radius:10px;padding:12px 16px;font-style:italic;}
+  .wc{font-size:14px;color:var(--muted);text-align:right;margin-top:4px;}
+  .btn{font-family:inherit;font-size:15px;font-weight:700;border-radius:8px;padding:8px 14px;cursor:pointer;border:1px solid var(--primary);background:#fff;color:var(--primary);}
+  .btn:hover{background:#EEF4FC;}
+  .btn.primary{background:var(--primary);color:#fff;}
+  .btn.primary:hover{background:#062C5E;}
+  .btn.small{font-size:13px;padding:5px 10px;}
+  .btn:disabled{opacity:.55;cursor:not-allowed;}
+  .audit label{display:flex;gap:10px;align-items:flex-start;padding:7px 0;cursor:pointer;}
+  .audit input{margin-top:6px;width:18px;height:18px;accent-color:var(--primary);}
+  #submission-panel{background:#fff;border:2px solid var(--primary);border-radius:12px;padding:20px 22px;margin-bottom:22px;}
+  #submission-panel.ready{box-shadow:0 0 0 4px rgba(255,189,89,.65);}
+  #submission-panel h2{color:var(--primary);margin:0 0 10px;font-size:19px;}
+  #studentNameInput{width:100%;margin-bottom:12px;}
+  .sub-btns{display:flex;flex-wrap:wrap;gap:10px;}
+  #submitStatus{margin-top:12px;font-weight:700;min-height:24px;}
+  .st-info{color:var(--primary);} .st-ok{color:var(--ok);} .st-err{color:var(--err);}
+  #teacherZone{text-align:right;margin-top:30px;}
+  #teacherBtn{background:none;border:none;color:#94A3B8;font-size:13px;cursor:pointer;text-decoration:underline;font-family:inherit;}
+  #partB{display:none;background:#fff;border:2px solid var(--accent);border-radius:12px;padding:22px;margin-top:16px;}
+  #partB h2{color:var(--primary);margin-top:0;}
+  #partB h3{color:var(--primary);margin:22px 0 6px;}
+  #partB .ans{background:#F0FDF4;border-radius:8px;padding:8px 12px;margin:6px 0;}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;padding:10px 18px;border-radius:99px;font-weight:700;display:none;z-index:99;}
+  .reset-row{text-align:right;margin-bottom:12px;}
+  @media (max-width:640px){.row .lbl{min-width:100%;}.top h1{font-size:15px;}}
+  @media print{
+    header.top .timer,.progress-wrap,.btn,.submission-panel,.tabs,.gotoTab,#teacherZone,#partB,.reset-row,.toast{display:none !important;}
+    header.top{position:static;box-shadow:none;border:none;}
+    body{background:#fff;font-size:12pt;}
+    .card{border:1px solid #999;break-inside:avoid-page;page-break-inside:avoid;}
+    select,input[type=text],textarea{border:1px solid #666;}
+    @page{size:A4;margin:14mm;}
+  }
+  .tabs{max-width:900px;margin:0 auto;padding:0 18px 10px;display:flex;gap:8px;flex-wrap:wrap;}
+  .tab-btn{font-family:inherit;font-size:15px;font-weight:700;padding:8px 16px;border-radius:99px;border:1px solid var(--primary);background:#fff;color:var(--primary);cursor:pointer;}
+  .tab-btn.active{background:var(--primary);color:#fff;}
+  .tab-page{display:none;}
+  .tab-page.active{display:block;}
+  .submission-panel{background:#fff;border:2px solid var(--primary);border-radius:12px;padding:20px 22px;margin-bottom:22px;}
+  .submission-panel.ready{box-shadow:0 0 0 4px rgba(255,189,89,.65);}
+  .submission-panel h2{color:var(--primary);margin:0 0 10px;font-size:19px;}
+  .studentNameInput{width:100%;margin-bottom:12px;}
+  .submitStatus{margin-top:12px;font-weight:700;min-height:24px;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div>
+      <h1>Mindset 1 – Free time, Hobbies &amp; Sports · Bài chuẩn bị trước giờ học</h1>
+      <p class="goals" id="goals"></p>
+    </div>
+    <div class="timer">
+      <span class="clock" id="clock">15:00</span>
+      <button class="btn small" id="tStart" type="button">Start</button>
+      <button class="btn small" id="tPause" type="button">Pause</button>
+      <button class="btn small" id="tReset" type="button">Reset</button>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress"><div id="progressBar"></div></div>
+      <div class="progress-label" id="progressLabel">Hoàn thành Tab 1: 0/3 phần</div>
+    </div>
+  </div>
+  <nav class="tabs">
+    <button class="tab-btn active" type="button" data-tab="t1">Tab 1 · Sửa lỗi Task 1 (15 phút)</button>
+    <button class="tab-btn" type="button" data-tab="t2">Tab 2 · Chuẩn bị Task 2 (30 phút)</button>
+  </nav>
+</header>
+
+<main>
+  <div class="reset-row"><button class="btn small" id="resetAll" type="button">↺ Làm lại từ đầu</button></div>
+
+  <!-- ===================== PHẦN A ===================== -->
+  <div class="tab-page" id="tab-t1" data-tab="t1">
+  <section class="card">
+    <h2>📊 Biểu đồ dùng cho cả Tab 1 <span class="badge">đọc 1 phút</span></h2>
+    <p class="instr">Biểu đồ dưới đây là số liệu giả định để luyện tập. Đọc kỹ số liệu trước khi làm bài.</p>
+    <div class="prompt-box" style="font-style:normal"><b>The bar chart shows the average number of hours per week that boys and girls aged 13–17 in a city spent on four free-time activities in 2025.</b></div>
+    <div style="text-align:center;margin-top:12px"><svg viewBox="0 0 640 320" role="img" aria-label="Bar chart" style="width:100%;max-width:640px;height:auto;font-family:Mulish,system-ui,sans-serif"><line x1="56" y1="260.0" x2="620" y2="260.0" stroke="#E2E8F0"/><text x="48" y="264.0" font-size="12" text-anchor="end" fill="#64748B">0</text><line x1="56" y1="227.1" x2="620" y2="227.1" stroke="#E2E8F0"/><text x="48" y="231.1" font-size="12" text-anchor="end" fill="#64748B">2</text><line x1="56" y1="194.3" x2="620" y2="194.3" stroke="#E2E8F0"/><text x="48" y="198.3" font-size="12" text-anchor="end" fill="#64748B">4</text><line x1="56" y1="161.4" x2="620" y2="161.4" stroke="#E2E8F0"/><text x="48" y="165.4" font-size="12" text-anchor="end" fill="#64748B">6</text><line x1="56" y1="128.6" x2="620" y2="128.6" stroke="#E2E8F0"/><text x="48" y="132.6" font-size="12" text-anchor="end" fill="#64748B">8</text><line x1="56" y1="95.7" x2="620" y2="95.7" stroke="#E2E8F0"/><text x="48" y="99.7" font-size="12" text-anchor="end" fill="#64748B">10</text><line x1="56" y1="62.9" x2="620" y2="62.9" stroke="#E2E8F0"/><text x="48" y="66.9" font-size="12" text-anchor="end" fill="#64748B">12</text><line x1="56" y1="30.0" x2="620" y2="30.0" stroke="#E2E8F0"/><text x="48" y="34.0" font-size="12" text-anchor="end" fill="#64748B">14</text><rect x="89.5" y="161.4" width="34" height="98.6" rx="3" fill="#08397A"/><text x="106.5" y="155.4" font-size="13" font-weight="700" text-anchor="middle" fill="#1E293B">6</text><rect x="129.5" y="210.7" width="34" height="49.3" rx="3" fill="#FFBD59"/><text x="146.5" y="204.7" font-size="13" font-weight="700" text-anchor="middle" fill="#1E293B">3</text><text x="126.5" y="280" font-size="13" text-anchor="middle" fill="#1E293B">Playing sports</text><rect x="230.5" y="112.1" width="34" height="147.9" rx="3" fill="#08397A"/><text x="247.5" y="106.1" font-size="13" font-weight="700" text-anchor="middle" fill="#1E293B">9</text><rect x="270.5" y="210.7" width="34" height="49.3" rx="3" fill="#FFBD59"/><text x="287.5" y="204.7" font-size="13" font-weight="700" text-anchor="middle" fill="#1E293B">3</text><text x="267.5" y="280" font-size="13" text-anchor="middle" fill="#1E293B">Video games</text><rect x="371.5" y="128.6" width="34" height="131.4" rx="3" fill="#08397A"/><text x="388.5" y="122.6" font-size="13" font-weight="700" text-anchor="middle" fill="#1E293B">8</text><rect x="411.5" y="62.9" width="34" height="197.1" rx="3" fill="#FFBD59"/><text x="428.5" y="56.9" font-size="13" font-weight="700" text-anchor="middle" fill="#1E293B">12</text><text x="408.5" y="280" font-size="13" text-anchor="middle" fill="#1E293B">Social media</text><rect x="512.5" y="227.1" width="34" height="32.9" rx="3" fill="#08397A"/><text x="529.5" y="221.1" font-size="13" font-weight="700" text-anchor="middle" fill="#1E293B">2</text><rect x="552.5" y="194.3" width="34" height="65.7" rx="3" fill="#FFBD59"/><text x="569.5" y="188.3" font-size="13" font-weight="700" text-anchor="middle" fill="#1E293B">4</text><text x="549.5" y="280" font-size="13" text-anchor="middle" fill="#1E293B">Reading</text><line x1="56" y1="260" x2="620" y2="260" stroke="#94A3B8"/><text x="16" y="145.0" font-size="12" fill="#64748B" transform="rotate(-90 16 145.0)" text-anchor="middle">Hours per week</text><rect x="230" y="296" width="14" height="14" fill="#08397A" rx="2"/><text x="250" y="308" font-size="13">Boys</text><rect x="320" y="296" width="14" height="14" fill="#FFBD59" rx="2"/><text x="340" y="308" font-size="13">Girls</text></svg></div>
+  </section>
+
+  <section class="card" data-stage="1">
+    <h2>Phần 1: Sửa lỗi so sánh số liệu <span class="badge">4 phút</span></h2>
+    <div class="tip">
+      💡 <b>Mẹo nhớ nhanh:</b><br>
+      ① Vế sau "than / as" = <b>that / those + GIỮ NGUYÊN giới từ của danh từ gốc + danh từ</b>: time spent <b>on</b> social media → that spent <b>on</b> reading. Danh từ số nhiều (the figures) → <b>those</b>.<br>
+      ② <b>among</b> luôn cần danh từ phía sau (among <b>all the figures</b>). Trước con số phải có <b>at / reaching</b>, không dùng "accounting for" cho số giờ.
+    </div>
+    <p class="instr">Mỗi câu có 1 chỗ trống. Chọn cụm từ đúng để câu đúng ngữ pháp và đúng số liệu.</p>
+    <div class="row"><span>1. The time boys spent playing sports was twice as high as</span><select data-k="t1p1q1" class="t1sel" data-opts="that of|those of|(để trống)"></select><span>girls, at 6 and 3 hours respectively.</span></div>
+    <div class="row"><span>2. The time girls spent on social media was much higher than</span><select data-k="t1p1q2" class="t1sel" data-opts="that of|that spent on|that in"></select><span>reading, at 12 and 4 hours respectively.</span></div>
+    <div class="row"><span>3. Girls spent the most time on social media,</span><select data-k="t1p1q3" class="t1sel" data-opts="at|accounting for|(để trống)"></select><span>12 hours a week.</span></div>
+    <div class="row"><span>4. The time boys spent on reading was the lowest</span><select data-k="t1p1q4" class="t1sel" data-opts="among|of all the figures|among, only"></select><span>, at only 2 hours a week.</span></div>
+    <div class="row"><span>5. The figures for boys were higher than</span><select data-k="t1p1q5" class="t1sel" data-opts="that for|those for|(để trống)"></select><span>girls in two activities.</span></div>
+  </section>
+
+  <section class="card" data-stage="2">
+    <h2>Phần 2: Luyện hoàn thành câu so sánh <span class="badge">5 phút</span></h2>
+    <p class="instr">Viết tiếp phần còn thiếu của mỗi câu, dùng gợi ý trong ngoặc. Nhớ quy tắc ở Phần 1.</p>
+    <div class="q">
+      <div class="q-title">(1) The time girls spent on reading was twice as high as … <span class="instr">(boys)</span></div>
+      <input type="text" class="wide" data-k="t1p2q1" placeholder="... twice as high as ...">
+    </div>
+    <div class="q">
+      <div class="q-title">(2) Time spent on social media by girls was four times as high as … <span class="instr">(sports)</span></div>
+      <input type="text" class="wide" data-k="t1p2q2" placeholder="... four times as high as ...">
+    </div>
+    <div class="q">
+      <div class="q-title">(3) Boys spent the most time on video games, … <span class="instr">(9 hours a week)</span></div>
+      <input type="text" class="wide" data-k="t1p2q3" placeholder="..., ...">
+    </div>
+    <div class="q">
+      <div class="q-title">(4) The figures for girls were higher than … in two activities. <span class="instr">(boys)</span></div>
+      <input type="text" class="wide" data-k="t1p2q4" placeholder="... higher than ...">
+    </div>
+  </section>
+
+  <section class="card" data-stage="3">
+    <h2>Phần 3: Viết 3 câu so sánh <span class="badge">6 phút</span></h2>
+    <p class="instr">Viết 3 câu so sánh. Mỗi câu được gợi ý ít dần đi.</p>
+    <div class="q">
+      <div class="q-title">Câu 1: điền nốt khung câu</div>
+      <div class="instr"><i>The time boys spent playing sports was ________ girls, at ___ and ___ hours respectively.</i></div>
+      <textarea class="t1w" data-k="t1w1" placeholder="The time boys spent playing sports was ..."></textarea>
+    </div>
+    <div class="q">
+      <div class="q-title">Câu 2: bắt đầu bằng <i>Time spent on social media by girls was …</i></div>
+      <div class="instr">Bắt buộc dùng: <b>the highest</b> · <b>among all the figures</b> · <b>at</b></div>
+      <textarea class="t1w" data-k="t1w2" placeholder="Time spent on social media by girls was ..."></textarea>
+    </div>
+    <div class="q">
+      <div class="q-title">Câu 3: tự viết từ số liệu gợi ý</div>
+      <div class="instr">Data: <i>boys – reading: 2 hours / boys – video games: 9 hours → much lower than …</i></div>
+      <textarea class="t1w" data-k="t1w3" placeholder="The time boys spent on reading ..."></textarea>
+    </div>
+    <div class="wc" id="wordCount-t1">0 words</div>
+
+    <h3>✅ Tự kiểm tra 1 phút trước khi nộp</h3>
+    <div class="audit">
+      <label><input type="checkbox" data-k="t1aud1" class="aud"> <span>Sau "than / as" mình đã viết <b>that / those + đúng giới từ + danh từ</b> chưa?</span></label>
+      <label><input type="checkbox" data-k="t1aud2" class="aud"> <span>Có "among" thì đã có <b>danh từ phía sau</b> chưa? Trước con số đã có <b>at</b> chưa?</span></label>
+      <label><input type="checkbox" data-k="t1aud3" class="aud"> <span>Số liệu và đơn vị (<b>hours</b>) đã khớp biểu đồ chưa? Nêu 2 số thì đã có <b>respectively</b> chưa?</span></label>
+    </div>
+  </section>
+
+  <section class="submission-panel" id="submission-panel-t1" data-tab="t1">
+    <h2>📤 Submit Tab 1 (Task 1 Review)</h2>
+    <input type="text" class="studentNameInput" id="studentNameInput-t1" placeholder="Enter your full name...">
+    <div class="sub-btns">
+      <button class="btn primary submitBtn" type="button" data-tab="t1">Submit Results to Teacher</button>
+      <button class="btn copyBtn" type="button" data-tab="t1">Copy Report (Offline Backup)</button>
+      <button class="btn printBtn" type="button">Print / Save PDF (Worksheet Only)</button>
+    </div>
+    <div class="submitStatus" id="submitStatus-t1"></div>
+  </section>
+  <p style="text-align:center"><button class="btn primary gotoTab" type="button" data-goto="t2">Làm tiếp Tab 2: Chuẩn bị Task 2 →</button></p>
+  </div>
+
+  <div class="tab-page" id="tab-t2" data-tab="t2">
+  <!-- CHẶNG 1 -->
+  <section class="card" data-stage="1">
+    <h2>Chặng 1: "Bắt bệnh" lỗi quen thuộc <span class="badge">4 phút</span></h2>
+    <div class="tip">
+      💡 <b>Mẹo nhớ nhanh:</b><br>
+      ① Mỗi câu = <b>Chủ ngữ + ĐỘNG TỪ CHÍNH</b>: Team sports <b>are</b> popular. "For example," phải đi với <b>một câu đầy đủ</b>.<br>
+      ② Không nối 2 câu đầy đủ chỉ bằng dấu phẩy. Dùng: <b>, whereas / , while / , which</b> hoặc <b>. However,</b> (However đứng đầu câu mới).
+    </div>
+    <p class="instr">Mỗi câu dưới đây có <b>1 lỗi</b> (ghi trong ngoặc vuông). Viết lại câu đúng vào ô, dùng gợi ý cho sẵn.</p>
+
+    <div class="q">
+      <div class="q-title">1. Team sports popular among teenagers in Vietnam. <span style="color:var(--err)">[Thiếu động từ chính]</span></div>
+      <textarea data-k="s1q1" placeholder="Viết lại câu đúng..."></textarea>
+    </div>
+    <div class="q">
+      <div class="q-title">2. For example, many young people in big cities. <span style="color:var(--err)">[Câu cụt: chưa có động từ]</span></div>
+      <div class="instr">Gợi ý ý: <i>play football after school</i></div>
+      <textarea data-k="s1q2" placeholder="Viết lại câu đúng..."></textarea>
+    </div>
+    <div class="q">
+      <div class="q-title">3. Team sports help people make friends, individual sports help people become more independent. <span style="color:var(--err)">[Nối bằng dấu phẩy]</span></div>
+      <div class="instr">Dùng: <b>whereas</b></div>
+      <textarea data-k="s1q3" placeholder="Viết lại câu đúng..."></textarea>
+    </div>
+    <div class="q">
+      <div class="q-title">4. Watching sports on TV is relaxing, however, it does not improve our health. <span style="color:var(--err)">[Dùng sai "however"]</span></div>
+      <div class="instr">Dùng: <b>. However,</b> (tách thành 2 câu)</div>
+      <textarea data-k="s1q4" placeholder="Viết lại câu đúng..."></textarea>
+    </div>
+    <div class="q">
+      <div class="q-title">5. Many teenagers spend hours on screens, is not good for their health. <span style="color:var(--err)">[2 động từ, thiếu từ nối]</span></div>
+      <div class="instr">Dùng: <b>, which</b></div>
+      <textarea data-k="s1q5" placeholder="Viết lại câu đúng..."></textarea>
+    </div>
+  </section>
+
+  <!-- CHẶNG 2 -->
+  <section class="card" data-stage="2">
+    <h2>Chặng 2: Học cụm từ "ăn điểm" &amp; Tư duy đề <span class="badge">8 phút</span></h2>
+
+    <h3>2.1. Học trước: Kho cụm từ cốt lõi (2 phút)</h3>
+    <p class="instr">Đọc kỹ 7 cụm từ dưới đây: nghĩa và câu ví dụ. Đây là những cụm chị sẽ <b>dùng lại ở Chặng 3 và Chặng 4</b>.</p>
+    <table>
+        <tr><th>Chunk</th><th>Meaning</th><th>Example</th></tr>
+        <tr><td><b>take part in team sports</b></td><td>to play sports in a group, e.g. football or volleyball</td><td><i>Children who take part in team sports learn to follow rules.</i></td></tr>
+        <tr><td><b>work together</b></td><td>to help each other to do something</td><td><i>Team members work together to win a match.</i></td></tr>
+        <tr><td><b>develop social skills</b></td><td>to become better at talking and getting on with other people</td><td><i>Group activities help teenagers develop social skills.</i></td></tr>
+        <tr><td><b>train alone</b></td><td>to practise a sport by yourself</td><td><i>Swimmers can train alone at their local pool.</i></td></tr>
+        <tr><td><b>build self-discipline</b></td><td>to learn to make yourself do the things you should do</td><td><i>Getting up early to run helps people build self-discipline.</i></td></tr>
+        <tr><td><b>manage their own time</b></td><td>to plan by themselves how to use their time</td><td><i>Students with part-time jobs must manage their own time.</i></td></tr>
+        <tr><td><b>become more independent</b></td><td>to need less help from other people</td><td><i>Living away from home helps young people become more independent.</i></td></tr>
+    </table>
+    <p class="instr"><b>Luyện nhanh (3 phút):</b> chọn cụm từ phù hợp để hoàn thành mỗi câu. Được nhìn lại bảng trên.</p>
+    <div class="row"><span>1. In a football match, players must</span><select data-k="s2c1" class="s2c"></select><span>to score goals.</span></div>
+    <div class="row"><span>2. Many students</span><select data-k="s2c2" class="s2c"></select><span>at school, such as football or volleyball.</span></div>
+    <div class="row"><span>3. Playing in a team helps children</span><select data-k="s2c3" class="s2c"></select><span>because they talk to many people.</span></div>
+    <div class="row"><span>4. Runners often</span><select data-k="s2c4" class="s2c"></select><span>in the early morning before work.</span></div>
+    <div class="row"><span>5. Doing exercise every day without a coach can help you</span><select data-k="s2c5" class="s2c"></select><span>.</span></div>
+    <div class="row"><span>6. When teenagers plan their own training, they learn to</span><select data-k="s2c6" class="s2c"></select><span>.</span></div>
+    <div class="row"><span>7. Young people who do sports alone often</span><select data-k="s2c7" class="s2c"></select><span>because they make their own decisions.</span></div>
+
+    <h3>2.2. Làm quen tư duy đề bài (3 phút)</h3>
+    <div class="prompt-box">Some people believe that team sports are better for young people, while others think that individual sports are more beneficial. Discuss both views and give your own opinion.</div>
+
+    <div class="q">
+      <div class="q-title">A. Đề này yêu cầu viết gì?</div>
+      <label class="opt"><input type="radio" name="s2sc1" value="a" data-k="s2sc1"> <span>a) Chỉ cần nêu ý kiến của mình</span></label>
+      <label class="opt"><input type="radio" name="s2sc1" value="b" data-k="s2sc1"> <span>b) Bàn cả 2 quan điểm và nêu ý kiến của mình</span></label>
+      <label class="opt"><input type="radio" name="s2sc1" value="c" data-k="s2sc1"> <span>c) Chỉ bàn về các môn thể thao đồng đội</span></label>
+    </div>
+    <div class="q">
+      <div class="q-title">B. Có bắt buộc nêu quan điểm cá nhân không?</div>
+      <label class="opt"><input type="radio" name="s2sc2" value="yes" data-k="s2sc2"> <span>Có: đề có cụm "give your own opinion"</span></label>
+      <label class="opt"><input type="radio" name="s2sc2" value="no" data-k="s2sc2"> <span>Không: chỉ cần trình bày 2 quan điểm</span></label>
+    </div>
+
+    <p class="instr"><b>C. Phân loại ý:</b> mỗi ý dưới đây ủng hộ <b>Team sports</b> hay <b>Individual sports</b>? Đọc kỹ để dùng lại ý và từ vựng khi viết.</p>
+    <div class="row"><span class="lbl">1. learn to cooperate and communicate with others</span><select data-k="s2s1" class="s2s"></select></div>
+    <div class="row"><span class="lbl">2. choose a flexible training time</span><select data-k="s2s2" class="s2s"></select></div>
+    <div class="row"><span class="lbl">3. take responsibility and build self-discipline</span><select data-k="s2s3" class="s2s"></select></div>
+    <div class="row"><span class="lbl">4. make new friends and feel less lonely</span><select data-k="s2s4" class="s2s"></select></div>
+    <div class="row"><span class="lbl">5. practise every day without waiting for others</span><select data-k="s2s5" class="s2s"></select></div>
+    <div class="row"><span class="lbl">6. learn to accept defeat together with teammates</span><select data-k="s2s6" class="s2s"></select></div>
+  </section>
+
+  <!-- CHẶNG 3 -->
+  <section class="card" data-stage="3">
+    <h2>Chặng 3: Học từ đoạn mẫu &amp; Luyện lắp câu <span class="badge">8 phút</span></h2>
+
+    <h3>3.1. Đọc và soi đoạn mẫu (Band 5.5–6.0)</h3>
+    <div class="model">
+      On the one hand, team sports can help young people develop social skills. This is because players must talk to each other and work together to win a match. For example, a football team needs eleven people to share the ball and plan together. As a result, team sports are good for young people's social life, whereas individual sports mainly build self-discipline.
+    </div>
+    <div class="q">
+      <div class="q-title">N1. Chép lại câu chủ đề (topic sentence) của đoạn.</div>
+      <input type="text" class="wide" data-k="s3n1" placeholder="Topic sentence: ...">
+    </div>
+    <div class="q">
+      <div class="q-title">N2. Câu 3 bắt đầu bằng "For example, a football team …". Động từ chính của câu này là từ nào?</div>
+      <input type="text" class="wide" data-k="s3n2" placeholder="Động từ chính: ...">
+    </div>
+    <div class="q">
+      <div class="q-title">N3. Câu cuối có 2 mệnh đề. Chúng được nối bằng từ nối nào?</div>
+      <input type="text" class="wide" data-k="s3n3" placeholder="Từ nối: ...">
+    </div>
+
+    <h3>3.2. Thực hành ghép câu (Guided Sentence Combining)</h3>
+    <p class="instr">Ghép 2 câu đơn bằng <b>từ nối cho sẵn</b>. Nhớ quy tắc ở Chặng 1: không nối chỉ bằng dấu phẩy, và mỗi mệnh đề phải có động từ chính.</p>
+    <div class="q">
+      <div class="q-title">(1) Team sports help people make friends. Individual sports help people become more independent.</div>
+      <div class="instr">Dùng: <b>, whereas</b></div>
+      <textarea data-k="s3c1" placeholder="Viết câu hoàn chỉnh..."></textarea>
+    </div>
+    <div class="q">
+      <div class="q-title">(2) Watching football on TV is fun. It does not help people stay fit.</div>
+      <div class="instr">Dùng: <b>. However,</b></div>
+      <textarea data-k="s3c2" placeholder="Viết câu hoàn chỉnh..."></textarea>
+    </div>
+    <div class="q">
+      <div class="q-title">(3) Playing sports outdoors gives people fresh air. It helps them develop social skills.</div>
+      <div class="instr">Dùng: <b>. In addition,</b></div>
+      <textarea data-k="s3c3" placeholder="Viết câu hoàn chỉnh..."></textarea>
+    </div>
+    <div class="q">
+      <div class="q-title">(4) Many teenagers play video games for hours. This is bad for their eyes.</div>
+      <div class="instr">Dùng: <b>, which</b> (bỏ "This")</div>
+      <textarea data-k="s3c4" placeholder="Viết câu hoàn chỉnh..."></textarea>
+    </div>
+  </section>
+
+  <!-- CHẶNG 4 -->
+  <section class="card" data-stage="4">
+    <h2>Chặng 4: Thực hành viết ngắn có khung dẫn <span class="badge">10 phút</span></h2>
+    <p class="instr">Viết <b>4 câu</b> thành 1 đoạn thân bài cho quan điểm thứ hai (Individual sports). Mỗi câu được gợi ý ít dần đi.</p>
+
+    <div class="q">
+      <div class="q-title">Câu 1 (Câu chủ đề): chọn 1 ô ở mỗi cột để tạo câu</div>
+      <table>
+        <tr><th>Mở đầu</th><th>Chủ ngữ</th><th>Động từ</th><th>Lợi ích</th></tr>
+        <tr><td>On the other hand,</td><td>individual sports<br>sports such as running and swimming</td><td>can help young people</td><td>become more independent.<br>build self-discipline.<br>manage their own time.</td></tr>
+      </table>
+      <input type="text" class="wide s4" data-k="s4c1" placeholder="On the other hand, ...">
+    </div>
+    <div class="q">
+      <div class="q-title">Câu 2 (Giải thích): bắt đầu bằng <i>This is because …</i></div>
+      <div class="instr">Bắt buộc dùng: <b>train alone</b> · <b>decide</b> · <b>their own schedule</b></div>
+      <textarea class="s4" data-k="s4c2" placeholder="This is because ..."></textarea>
+    </div>
+    <div class="q">
+      <div class="q-title">Câu 3 (Ví dụ): bắt đầu bằng <i>For example, …</i></div>
+      <div class="instr">Bắt buộc dùng: <b>swimming</b> · <b>at any time</b> · <b>without waiting for</b></div>
+      <textarea class="s4" data-k="s4c3" placeholder="For example, ..."></textarea>
+    </div>
+    <div class="q">
+      <div class="q-title">Câu 4 (Mặt hạn chế, tự viết): viết thành câu hoàn chỉnh từ ý gợi ý dưới đây</div>
+      <div class="instr">Idea: <i>However → individual sports: sometimes feel lonely / no teammates to talk to</i> (gợi ý: <b>However, … because …</b>)</div>
+      <textarea class="s4" data-k="s4c4" placeholder="However, ..."></textarea>
+    </div>
+    <div class="wc" id="wordCount-t2">0 words</div>
+
+    <h3>✅ Tự kiểm tra 1 phút trước khi nộp</h3>
+    <div class="audit">
+      <label><input type="checkbox" data-k="aud1" class="aud"> <span>Mỗi câu của mình đã có đủ <b>chủ ngữ + động từ chính</b> chưa? (gạch chân thử từng câu)</span></label>
+      <label><input type="checkbox" data-k="aud2" class="aud"> <span>Mình có nối 2 câu đầy đủ <b>chỉ bằng dấu phẩy</b> không? <b>However</b> đã đứng đầu câu mới chưa?</span></label>
+      <label><input type="checkbox" data-k="aud3" class="aud"> <span>Đoạn của mình đã đủ <b>câu chủ đề → giải thích (because) → ví dụ (For example)</b> chưa?</span></label>
+    </div>
+  </section>
+
+  <section class="submission-panel" id="submission-panel" data-tab="t2">
+    <h2>📤 Submit Tab 2 (Task 2 Preparation)</h2>
+    <input type="text" class="studentNameInput" id="studentNameInput-t2" placeholder="Enter your full name...">
+    <div class="sub-btns">
+      <button class="btn primary submitBtn" type="button" data-tab="t2">Submit Results to Teacher</button>
+      <button class="btn copyBtn" type="button" data-tab="t2">Copy Report (Offline Backup)</button>
+      <button class="btn printBtn" type="button">Print / Save PDF (Worksheet Only)</button>
+    </div>
+    <div class="submitStatus" id="submitStatus-t2"></div>
+  </section>
+  <p style="text-align:center"><button class="btn gotoTab" type="button" data-goto="t1">← Quay lại Tab 1</button></p>
+  </div>
+
+  <!-- ===================== PHẦN B ===================== -->
+  <div id="teacherZone">
+    <!-- Ghi chú cho giáo viên: mã mở Phần B là GV2026 -->
+    <button id="teacherBtn" type="button">Dành cho Giáo viên (Mở Phần B)</button>
+  </div>
+
+  <section id="partB">
+    <h2>PHẦN B: HƯỚNG DẪN CHẤM NHANH &amp; CẦU NỐI LÊN LỚP</h2>
+    <button class="btn primary" id="cleanDownloadBtn" type="button">⬇ Tải bản HTML sạch chỉ chứa Phần A (đã xóa Phần B)</button>
+
+    <h3>A. TAB 1: SỬA LỖI TASK 1 (15 phút)</h3>
+    <p><b>Mã lỗi đã chọn:</b></p>
+    <ul>
+      <li><b>CC-02 (quy chiếu that / those):</b> vế so sánh sau không song song. Hà My mặc định dùng "that of", hoặc bỏ mất danh từ sau "that of". Có khoảng 10 lần sai ở tab (2), ví dụ: <i>that of industry</i>, <i>that of French</i>, <i>that in Korea</i>, <i>that of electronic devices</i>, <i>that of clothes</i>.</li>
+      <li><b>GRA-09 (giới từ với số liệu):</b> viết "the lowest among" rồi bỏ trống danh từ, thiếu at / to trước con số, dùng "accounting for" cho số tiền. Có khoảng 9 lần sai ở tab (2) Bài 7–8 và tab (1) Ex10, ví dụ: <i>the highest among, at 25%</i>; <i>only 3%</i>; <i>fell just over 8,000</i>.</li>
+    </ul>
+    <p><b>Lý do:</b> hai lỗi này chiếm khoảng 70% số câu sai và trùng với 2 bài phải làm lại (Bài 4, Bài 8). Biểu đồ dùng chủ đề giải trí (thể thao, video games, social media, reading) để chị làm quen trước từ vựng của Tab 2.</p>
+
+    <p><b>Đáp án Phần 1:</b></p>
+    <div class="ans">1 <b>that of</b> · 2 <b>that spent on</b> · 3 <b>at</b> · 4 <b>of all the figures</b> · 5 <b>those for</b></div>
+    <ul>
+      <li>Câu 2: time spent <b>on</b> → that spent <b>on</b>. Đây là câu bẫy đúng kiểu lỗi cũ "that of clothes".</li>
+      <li>Câu 4: "among" mà không có danh từ là sai.</li>
+      <li>Câu 5: the figures (số nhiều) → <b>those</b>.</li>
+      <li>Câu 5 đúng số liệu: nam cao hơn nữ ở sports và video games, tức 2 hoạt động.</li>
+    </ul>
+    <p><b>Đáp án Phần 2 (máy chấm theo cụm in đậm):</b></p>
+    <div class="ans">
+      (1) … twice as high as <b>that of boys</b>.<br>
+      (2) … four times as high as <b>that spent on sports</b>.<br>
+      (3) Boys spent the most time on video games, <b>at 9 hours a week</b>.<br>
+      (4) The figures for girls were higher than <b>those for boys</b> in two activities.
+    </div>
+    <p>Lưu ý: nếu chị viết đúng theo cách khác (ví dụ "reaching 9 hours a week" ở câu 3), máy sẽ báo sai, bạn chấm lại tay.</p>
+    <p><b>Phần 3, đáp án tham khảo:</b></p>
+    <div class="ans">
+      1. The time boys spent playing sports was <b>twice as high as that of</b> girls, at 6 and 3 hours respectively.<br>
+      2. Time spent on social media by girls was <b>the highest among all the figures, at</b> 12 hours a week.<br>
+      3. The time boys spent on reading was much lower than <b>that spent on</b> video games, at 2 and 9 hours respectively.
+    </div>
+    <p><b>3 dấu hiệu báo động:</b></p>
+    <ol>
+      <li><b>Câu 3 viết "than video games" hoặc "than that of video games":</b> CC-02 chưa hết. Đầu giờ cho chị nói to 3 cặp: <i>time spent on A → that spent on B</i>, <i>the income of A → that of B</i>, <i>the figures for A → those for B</i>.</li>
+      <li><b>Câu 2 bỏ danh từ sau "among" hoặc thiếu "at":</b> GRA-09 chưa hết. Cho chị sửa nhanh 2 câu cũ ở Bài 8 (câu 1, câu 4).</li>
+      <li><b>Sai số liệu hoặc sai bội số</b> (ví dụ viết "three times" cho 6 và 3): chị đang viết theo mẫu mà chưa đọc biểu đồ. Yêu cầu chị đọc số trước rồi mới chọn cấu trúc.</li>
+    </ol>
+
+    <h3 style="margin-top:30px">B. TAB 2: CHUẨN BỊ TASK 2 (30 phút)</h3>
+
+    <h3>1. Quyết định sư phạm (Tab 2)</h3>
+    <p><b>Mã lỗi đã chọn:</b></p>
+    <ul>
+      <li><b>GRA-06 (câu thiếu động từ chính / câu cụt):</b> ví dụ <i>obese adults for the largest group</i>, <i>severely obese adults for only 6%</i> (tab 3), <i>The cost of living in Japan almost the same as that in Paris</i>, <i>The proportion of people taking the subway nearly the same as…</i> (tab 2, Bài 6).</li>
+      <li><b>GRA-03 (nối mệnh đề bằng dấu phẩy, một mệnh đề có 2 động từ):</b> ví dụ <i>…only 6%, was much lower than…</i> (tab 3, mã [2V]), <i>…fell just over 8,000 visitors in 2000 grew quickly…</i> và <i>…grew dramatically each had the highest…</i> (tab 1, Ex10).</li>
+    </ul>
+    <p><b>Lý do ưu tiên:</b></p>
+    <ul>
+      <li>Đây là 2 lỗi không phụ thuộc dạng đề, nên sẽ xuất hiện ngay trong bài Task 2 này.</li>
+      <li>Trọng tâm của bài là từ nối (whereas, while, however, in addition, for example). Học viên band 4.5 hay viết "…, however, …" hoặc nối 2 mệnh đề bằng dấu phẩy, nên sửa GRA-03 đúng lúc học từ nối là hiệu quả nhất.</li>
+      <li>Hai lỗi này trùng với chốt chặn (1) và (2) ở phần tổng kết ngày 04/11.</li>
+    </ul>
+    <p><b>Lỗi tạm hoãn sang buổi sau:</b></p>
+    <ul>
+      <li>CC-02 / GRA-09: vế so sánh <i>that of / that in</i>, thiếu <i>at / to</i> trước con số, <i>among</i> thiếu danh từ. Đây là lỗi Task 1 dạng chart, nên để dành cho bài Task 1 tiếp theo.</li>
+      <li>GRA-05: hiện tại hoàn thành với since.</li>
+      <li>T1-03: chủ ngữ số liệu trong overview.</li>
+      <li>LR-05: sai chính tả <i>slighty / significatly / tiwce</i>.</li>
+    </ul>
+    <p><b>Liên kết với bài Mindset 1:</b> Chặng 2 dạy trước 7 cụm từ (bảng nghĩa + câu ví dụ, rồi luyện điền), đúng những cụm xuất hiện lại ở Chặng 3–4, sau đó kiểm tra phạm vi đề Discuss both views. Chặng 3 giải phẫu cấu trúc đoạn (topic sentence → because → For example) và luyện ghép câu bằng whereas / However / In addition / which. Chặng 4 tạo sẵn đoạn Body 2 cho đề trên lớp.</p>
+
+    <h3>2. Đáp án chuẩn Chặng 1–3</h3>
+    <p><b>Chặng 1 (đáp án tham khảo):</b></p>
+    <div class="ans">
+      1. Team sports <b>are</b> popular among teenagers in Vietnam.<br>
+      2. For example, many young people in big cities <b>play</b> football after school.<br>
+      3. Team sports help people make friends, <b>whereas</b> individual sports help people become more independent.<br>
+      4. Watching sports on TV is relaxing<b>. However,</b> it does not improve our health. (Chấp nhận: "relaxing; however, it…")<br>
+      5. Many teenagers spend hours on screens, <b>which</b> is not good for their health.
+    </div>
+    <p>Câu bẫy: câu 4 dễ chỉ bỏ dấu phẩy trước however mà vẫn viết liền một câu. Câu 5 dễ thêm "and" nhưng vẫn thiếu chủ ngữ cho "is".</p>
+    <p><b>Chặng 2.1:</b></p>
+    <div class="ans">1 work together · 2 take part in team sports · 3 develop social skills · 4 train alone · 5 build self-discipline · 6 manage their own time · 7 become more independent</div>
+    <p>Câu bẫy: câu 5 và câu 7 dễ nhầm với nhau. Mẹo phân biệt: "without a coach / every day" → build self-discipline; "make their own decisions" → become more independent. Các collocation của sách (sedentary lifestyle, physical well-being, unwind, recreational activities) để dạy trên lớp.</p>
+    <p><b>Chặng 2.2:</b></p>
+    <div class="ans">A-<b>b</b> · B-<b>Có</b> · C: 1 Team · 2 Individual · 3 Individual · 4 Team · 5 Individual · 6 Team</div>
+    <p>Câu bẫy: ý 3 (take responsibility…) dễ bị xếp vào Team.</p>
+    <p><b>Chặng 3.1:</b></p>
+    <div class="ans">N1: <i>On the one hand, team sports can help young people develop social skills.</i><br>N2: <b>needs</b> (chủ ngữ: a football team)<br>N3: <b>whereas</b></div>
+    <p><b>Chặng 3.2 (đáp án tham khảo):</b></p>
+    <div class="ans">
+      (1) Team sports help people make friends, <b>whereas</b> individual sports help people become more independent.<br>
+      (2) Watching football on TV is fun<b>. However,</b> it does not help people stay fit.<br>
+      (3) Playing sports outdoors gives people fresh air<b>. In addition,</b> it helps them develop social skills.<br>
+      (4) Many teenagers play video games for hours, <b>which</b> is bad for their eyes.
+    </div>
+    <p>Câu bẫy: câu (4) giữ cả "This" (<i>…for hours, which this is bad…</i>) là sai.</p>
+
+    <h3>3. Rubric chấm nhanh Chặng 4 (3 phút)</h3>
+    <p><b>Đáp án tham khảo Band 5.5–6.0 (56 từ):</b></p>
+    <div class="ans">On the other hand, individual sports can help young people become more independent. This is because they can train alone and decide their own schedule. For example, a swimmer can go to the pool at any time without waiting for teammates. However, individual sports can sometimes feel lonely because there are no teammates to talk to.</div>
+    <p><b>Chấm theo 3 mục, mỗi mục 1 điểm:</b></p>
+    <ul>
+      <li>Cả 4 câu đều có chủ ngữ + động từ chính.</li>
+      <li>Không có lỗi nối mệnh đề bằng dấu phẩy; However đứng đầu câu 4.</li>
+      <li>Đủ 3 bước topic → because → For example.</li>
+    </ul>
+    <p><b>3 dấu hiệu báo động:</b></p>
+    <ol>
+      <li><b>Câu 3 thành câu cụt</b> (<i>For example, a swimmer at any time…</i>) hoặc câu 2 có 2 động từ (<i>they can train alone decide…</i>): GRA-06 chưa hết. Đầu giờ cho chị gạch chân S và V của từng câu Chặng 4 trong 1 phút.</li>
+      <li><b>Câu 4 viết "…teammates, however, …"</b> nối với câu 3, hoặc viết "However individual sports…" mà không có dấu phẩy: GRA-03 chưa hết. Cho chị sửa nhanh 3 câu mẫu với 3 cách: <i>. However, / ; however, / , whereas</i>.</li>
+      <li><b>Câu 3 chỉ nhắc lại câu chủ đề, không có ví dụ cụ thể:</b> chưa nắm kỹ năng triển khai ý. Đưa lại đoạn mẫu 3.1 và hỏi "câu nào là ví dụ?".</li>
+    </ol>
+
+    <h3>4. Cầu nối vào sách Mindset 1 (3–5 phút đầu buổi)</h3>
+    <ol>
+      <li>(1 phút) Hỏi nhanh Tab 1: chị đọc to câu 3 Phần 3 và tự kiểm tra "that spent on". Sau đó chuyển sang Task 2.</li>
+      <li>Chiếu đoạn Chặng 4 của Hà My cạnh đoạn mẫu 3.1 (Team sports).</li>
+      <li>Chị tự ghép 2 đoạn thành Body 1 và Body 2 của đề Discuss both views, rồi nói thêm 1 câu ý kiến cá nhân dùng <i>while / whereas</i>.</li>
+      <li>Hỏi nhanh: "Body 1 và Body 2 dùng từ nối nào để chuyển ý?" (On the one hand → On the other hand) và "Câu nào trong đoạn của chị dùng However?".</li>
+      <li>Từ đó vào ngay bài tập linking words đầu tiên trong sách.</li>
+    </ol>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbysr8HPbHmzEguY8KZK_XtP3lkEpthGpTOYthsfq3FltEVqmlrdGw5jOzU7IktvlO2q8g/exec";
+const LESSON_META = {
+  t1: { taskType: "Task 1 - Bar chart (Comparisons review)", lessonTitle: "Mindset 1 - Task 1 Review: Comparing data (Free-time activities chart)", targetErrors: "CC-02, GRA-09" },
+  t2: { taskType: "Task 2 - Discuss both views", lessonTitle: "Mindset 1 - Free time, Hobbies & Sports (Organising ideas & Comparing)", targetErrors: "GRA-06, GRA-03" }
+};
+const STORE_KEY = "mindset1_free_time_sports_HaMy_2tabs_v1";
+const TAB_SECONDS = { t1: 900, t2: 1800 };
+const TAB_GOALS = {
+  t1: '🎯 (1) Vế so sánh đúng: <b>that / those + đúng giới từ + danh từ</b> · (2) <b>among + danh từ</b>, <b>at</b> trước con số',
+  t2: '🎯 (1) Mỗi câu có đủ <b>chủ ngữ + động từ chính</b>, nối 2 mệnh đề bằng <b>từ nối</b> chứ không chỉ bằng dấu phẩy · (2) Viết đoạn có <b>câu chủ đề → giải thích → ví dụ</b>'
+};
+const WRITING_KEYS = { t1: ["t1w1","t1w2","t1w3"], t2: ["s4c1","s4c2","s4c3","s4c4"] };
+
+const CHUNK_OPTIONS = [
+  ["become more independent","become more independent"],["build self-discipline","build self-discipline"],["develop social skills","develop social skills"],
+  ["manage their own time","manage their own time"],["take part in team sports","take part in team sports"],["train alone","train alone"],["work together","work together"]
+];
+const SORT_OPTIONS = [["Team","Team sports"],["Individual","Individual sports"]];
+const KEY = {
+  t1p1: {t1p1q1:"that of", t1p1q2:"that spent on", t1p1q3:"at", t1p1q4:"of all the figures", t1p1q5:"those for"},
+  t1p2: {t1p2q1:"that of boys", t1p2q2:"that spent on sports", t1p2q3:"at 9 hours", t1p2q4:"those for boys"},
+  chunks: {s2c1:"work together", s2c2:"take part in team sports", s2c3:"develop social skills", s2c4:"train alone", s2c5:"build self-discipline", s2c6:"manage their own time", s2c7:"become more independent"},
+  scope: {s2sc1:"b", s2sc2:"yes"},
+  sort: {s2s1:"Team", s2s2:"Individual", s2s3:"Individual", s2s4:"Team", s2s5:"Individual", s2s6:"Team"}
+};
+
+function fillSelect(sel, opts){
+  if (sel.options.length) return;
+  const o0 = document.createElement("option"); o0.value = ""; o0.textContent = "— chọn —"; sel.appendChild(o0);
+  opts.forEach(function(p){ const o = document.createElement("option"); o.value = p[0]; o.textContent = p[1]; sel.appendChild(o); });
+}
+document.querySelectorAll("select.s2c").forEach(function(s){ fillSelect(s, CHUNK_OPTIONS); });
+document.querySelectorAll("select.s2s").forEach(function(s){ fillSelect(s, SORT_OPTIONS); });
+document.querySelectorAll("select.t1sel").forEach(function(s){ fillSelect(s, s.getAttribute("data-opts").split("|").map(function(x){ return [x, x]; })); });
+
+/* ---------- State & LocalStorage ---------- */
+function freshState(){
+  return { answers: {}, studentName: "", activeTab: "t1",
+    timers: { t1: { remaining: TAB_SECONDS.t1, elapsed: 0, first: null }, t2: { remaining: TAB_SECONDS.t2, elapsed: 0, first: null } } };
+}
+let state = freshState();
+function loadState(){
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) { const s = JSON.parse(raw); const f = freshState(); state = Object.assign(f, s); state.timers = Object.assign(f.timers, s.timers || {}); }
+  } catch(e) {}
+}
+function saveState(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch(e) {} }
+function fields(){ return Array.prototype.slice.call(document.querySelectorAll("[data-k]")); }
+function getVal(k){
+  const el = document.querySelector('[data-k="' + k + '"]');
+  if (!el) return "";
+  if (el.type === "radio") { const c = document.querySelector('input[data-k="' + k + '"]:checked'); return c ? c.value : ""; }
+  if (el.type === "checkbox") return el.checked;
+  return (el.value || "").trim();
+}
+function tabOf(el){ const p = el.closest ? el.closest(".tab-page") : null; return p ? p.getAttribute("data-tab") : state.activeTab; }
+function applyState(){
+  fields().forEach(function(el){
+    const k = el.getAttribute("data-k"); const v = state.answers[k];
+    if (v === undefined) return;
+    if (el.type === "radio") el.checked = (el.value === v);
+    else if (el.type === "checkbox") el.checked = !!v;
+    else el.value = v;
+  });
+  document.querySelectorAll(".studentNameInput").forEach(function(n){ n.value = state.studentName || ""; });
+  refreshAll();
+  showTab(state.activeTab || "t1");
+}
+function refreshAll(){ refreshOptStyles(); ["t1","t2"].forEach(function(t){ updateWordCount(t); updateAudit(t); }); updateProgress(); renderClock(); }
+function markInteraction(tab){ if (!state.timers[tab].first) state.timers[tab].first = Date.now(); }
+function onFieldChange(e){
+  const el = e.target; const k = el.getAttribute && el.getAttribute("data-k"); if (!k) return;
+  markInteraction(tabOf(el));
+  if (el.type === "radio") state.answers[k] = el.value;
+  else if (el.type === "checkbox") state.answers[k] = el.checked;
+  else state.answers[k] = el.value;
+  saveState(); refreshOptStyles(); updateWordCount(tabOf(el)); updateAudit(tabOf(el)); updateProgress();
+}
+document.addEventListener("input", onFieldChange);
+document.addEventListener("change", onFieldChange);
+function refreshOptStyles(){ document.querySelectorAll(".opt").forEach(function(l){ const i = l.querySelector("input"); l.classList.toggle("sel", !!(i && i.checked)); }); }
+
+/* ---------- Tabs ---------- */
+function showTab(t){
+  if (state.activeTab !== t) pauseTimer();
+  state.activeTab = t; saveState();
+  document.querySelectorAll(".tab-page").forEach(function(p){ p.classList.toggle("active", p.getAttribute("data-tab") === t); });
+  document.querySelectorAll(".tab-btn").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-tab") === t); });
+  const g = document.getElementById("goals"); if (g) g.innerHTML = TAB_GOALS[t];
+  updateProgress(); renderClock();
+}
+document.querySelectorAll(".tab-btn").forEach(function(b){ b.addEventListener("click", function(){ showTab(b.getAttribute("data-tab")); window.scrollTo(0, 0); }); });
+document.querySelectorAll(".gotoTab").forEach(function(b){ b.addEventListener("click", function(){ showTab(b.getAttribute("data-goto")); window.scrollTo(0, 0); }); });
+
+/* ---------- Word count ---------- */
+function countWords(t){ const m = (t || "").trim().match(/[A-Za-z0-9'’\-$%.,]+/g); return m ? m.filter(function(w){ return /[A-Za-z0-9]/.test(w); }).length : 0; }
+function writingText(t){ return WRITING_KEYS[t].map(getVal); }
+function updateWordCount(t){
+  const total = writingText(t).reduce(function(a, x){ return a + countWords(x); }, 0);
+  const wc = document.getElementById("wordCount-" + t); if (wc) wc.textContent = total + " words";
+  return total;
+}
+
+/* ---------- Progress ---------- */
+function stageDone(sec){
+  const keys = {};
+  sec.querySelectorAll("[data-k]").forEach(function(el){ const k = el.getAttribute("data-k"); if (!/note$/.test(k)) keys[k] = el.type; });
+  return Object.keys(keys).every(function(k){ const v = getVal(k); return keys[k] === "checkbox" ? v === true : v !== ""; });
+}
+function updateProgress(){
+  const page = document.getElementById("tab-" + state.activeTab); if (!page) return;
+  const secs = page.querySelectorAll("section[data-stage]");
+  let done = 0; secs.forEach(function(s){ if (stageDone(s)) done++; });
+  const bar = document.getElementById("progressBar"); if (bar) bar.style.width = (secs.length ? Math.round(done / secs.length * 100) : 0) + "%";
+  const lbl = document.getElementById("progressLabel"); if (lbl) lbl.textContent = "Hoàn thành " + (state.activeTab === "t1" ? "Tab 1" : "Tab 2") + ": " + done + "/" + secs.length + (state.activeTab === "t1" ? " phần" : " chặng");
+}
+function updateAudit(t){
+  const page = document.getElementById("tab-" + t); if (!page) return 0;
+  const n = page.querySelectorAll(".aud:checked").length;
+  const p = page.querySelector(".submission-panel"); if (p) p.classList.toggle("ready", n === 3);
+  return n;
+}
+
+/* ---------- Timer ---------- */
+let tick = null;
+function fmt(s){ const m = Math.floor(s / 60), r = s % 60; return (m < 10 ? "0" : "") + m + ":" + (r < 10 ? "0" : "") + r; }
+function renderClock(){
+  const c = document.getElementById("clock"); if (!c) return;
+  const tm = state.timers[state.activeTab];
+  c.textContent = fmt(Math.max(0, tm.remaining)); c.classList.toggle("low", tm.remaining <= 180);
+}
+function startTimer(){
+  if (tick) return; const tab = state.activeTab; markInteraction(tab);
+  tick = setInterval(function(){
+    const tm = state.timers[tab];
+    if (tm.remaining > 0) tm.remaining--;
+    tm.elapsed++;
+    renderClock();
+    if (tm.elapsed % 5 === 0) saveState();
+    if (tm.remaining === 0) { showToast("⏰ Hết giờ! Hãy kiểm tra lại và nộp bài."); pauseTimer(); }
+  }, 1000);
+}
+function pauseTimer(){ if (tick) { clearInterval(tick); tick = null; } saveState(); }
+function resetTimer(){ pauseTimer(); const t = state.activeTab; state.timers[t].remaining = TAB_SECONDS[t]; state.timers[t].elapsed = 0; saveState(); renderClock(); }
+document.getElementById("tStart").addEventListener("click", startTimer);
+document.getElementById("tPause").addEventListener("click", pauseTimer);
+document.getElementById("tReset").addEventListener("click", resetTimer);
+function elapsedForReport(t){
+  const tm = state.timers[t]; let s = tm.elapsed;
+  if (!s && tm.first) s = Math.round((Date.now() - tm.first) / 1000);
+  return s;
+}
+function fmtSpent(s){ return Math.floor(s / 60) + "m " + (s % 60) + "s"; }
+
+/* ---------- Reset all ---------- */
+document.getElementById("resetAll").addEventListener("click", function(){
+  if (!confirm("Xóa toàn bộ bài làm (cả 2 tab) và làm lại từ đầu?")) return;
+  pauseTimer();
+  try { localStorage.removeItem(STORE_KEY); } catch(e) {}
+  state = freshState();
+  fields().forEach(function(el){ if (el.type === "radio" || el.type === "checkbox") el.checked = false; else el.value = ""; });
+  applyState();
+});
+
+/* ---------- Toast ---------- */
+function showToast(msg){ const t = document.getElementById("toast"); if (!t) return; t.textContent = msg; t.style.display = "block"; setTimeout(function(){ t.style.display = "none"; }, 2600); }
+
+/* ---------- Build payload ---------- */
+function norm(t){ return (t || "").toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, " "); }
+function gradeSelect(map, label, errs){
+  let n = 0; const ks = Object.keys(map);
+  ks.forEach(function(k, i){ const v = getVal(k); if (v === map[k]) n++; else if (!v) errs.push("- " + label + " Q" + (i + 1) + ": blank"); else errs.push("- " + label + " Q" + (i + 1) + ': chose "' + v + '" [Expected: ' + map[k] + "]"); });
+  return n + "/" + ks.length;
+}
+function buildPayloadT1(errs){
+  const p1 = gradeSelect(KEY.t1p1, "T1 P1", errs);
+  let p2n = 0; const p2k = Object.keys(KEY.t1p2);
+  const p2lines = p2k.map(function(k, i){
+    const v = getVal(k);
+    if (v && norm(v).indexOf(KEY.t1p2[k]) > -1) p2n++;
+    else if (!v) errs.push("- T1 P2 (" + (i + 1) + "): blank");
+    else errs.push("- T1 P2 (" + (i + 1) + '): "' + v + '" [Expected: ' + KEY.t1p2[k] + "]");
+    return "(" + (i + 1) + ") " + (v || "[blank]");
+  });
+  return {
+    stage1Summary: "[Cued Correction - Comparisons] " + p1,
+    stage2Summary: "[3C Cloze - Comparison endings] " + p2n + "/" + p2k.length + "\n" + p2lines.join("\n"),
+    stage3Summary: "N/A (15-min Task 1 review tab: Part 1 = stage1, Part 2 = stage2, Part 3 = stage4)"
+  };
+}
+function buildPayloadT2(errs){
+  const s1keys = ["s1q1","s1q2","s1q3","s1q4","s1q5"];
+  const s1lines = s1keys.map(function(k, i){ const v = getVal(k); if (!v) errs.push("- S1 Q" + (i + 1) + ": blank"); return "Q" + (i + 1) + ": " + (v || "[blank]"); });
+  const stage1Summary = "[1C Sentence Surgery] Completed: " + s1lines.filter(function(x){ return x.indexOf("[blank]") === -1; }).length + "/5\n" + s1lines.join("\n");
+  const c = gradeSelect(KEY.chunks, "S2.1", errs);
+  const so = gradeSelect(KEY.sort, "S2.2 Sort", errs);
+  const sc = gradeSelect(KEY.scope, "S2.2 Scope", errs);
+  const stage2Summary = "Chunks: " + c + " | Sorting/Grouping: " + so + " | Scope: " + sc;
+  const n1 = getVal("s3n1"), n2 = getVal("s3n2"), n3 = getVal("s3n3");
+  let nt = 0;
+  if (norm(n1).indexOf("team sports can help young people develop social skills") > -1) nt++; else errs.push("- S3.1 N1: " + (n1 ? '"' + n1 + '"' : "blank") + " [Expected: On the one hand, team sports can help young people develop social skills.]");
+  if (/\bneeds\b/.test(norm(n2))) nt++; else errs.push("- S3.1 N2: " + (n2 ? '"' + n2 + '"' : "blank") + " [Expected: needs]");
+  if (norm(n3).indexOf("whereas") > -1) nt++; else errs.push("- S3.1 N3: " + (n3 ? '"' + n3 + '"' : "blank") + " [Expected: whereas]");
+  const comb = ["s3c1","s3c2","s3c3","s3c4"].map(function(k, i){ const v = getVal(k); if (!v) errs.push("- S3.2 (" + (i + 1) + "): blank"); return "(" + (i + 1) + ") " + (v || "[blank]"); });
+  const stage3Summary = "Noticing: " + nt + "/3 | [3B Combining] Completed: " + comb.filter(function(x){ return x.indexOf("[blank]") === -1; }).length + "/4\n" + comb.join("\n");
+  return { stage1Summary: stage1Summary, stage2Summary: stage2Summary, stage3Summary: stage3Summary };
+}
+function buildSubmissionPayload(t){
+  const errs = [];
+  const parts = t === "t1" ? buildPayloadT1(errs) : buildPayloadT2(errs);
+  const w = writingText(t);
+  const nameEl = document.getElementById("studentNameInput-" + t);
+  return {
+    studentName: (nameEl ? nameEl.value : state.studentName || "").trim(),
+    taskType: LESSON_META[t].taskType,
+    lessonTitle: LESSON_META[t].lessonTitle,
+    targetErrors: LESSON_META[t].targetErrors,
+    timeSpent: fmtSpent(elapsedForReport(t)),
+    stage1Summary: parts.stage1Summary,
+    stage2Summary: parts.stage2Summary,
+    stage3Summary: parts.stage3Summary,
+    stage4Writing: w.map(function(x, i){ return "C" + (i + 1) + ": " + (x || "[blank]"); }).join("\n"),
+    stage4Meta: updateWordCount(t) + " words | Self-Audit: " + updateAudit(t) + "/3",
+    errorDetails: errs.length ? errs.join("\n") : "No errors detected in auto-graded items."
+  };
+}
+function payloadToText(p){
+  return [
+    "STUDENT: " + (p.studentName || "[no name]"),
+    "LESSON: " + p.lessonTitle + " (" + p.taskType + ")",
+    "TARGET ERRORS: " + p.targetErrors,
+    "TIME SPENT: " + p.timeSpent,
+    "", "STAGE 1: " + p.stage1Summary,
+    "STAGE 2: " + p.stage2Summary,
+    "STAGE 3: " + p.stage3Summary,
+    "", "WRITING:\n" + p.stage4Writing,
+    "WRITING META: " + p.stage4Meta,
+    "", "ERROR DETAILS:\n" + p.errorDetails
+  ].join("\n");
+}
+
+/* ---------- Submission ---------- */
+function setStatus(t, msg, cls){ const s = document.getElementById("submitStatus-" + t); if (s) { s.textContent = msg; s.className = "submitStatus " + cls; } }
+document.querySelectorAll(".studentNameInput").forEach(function(inp){
+  inp.addEventListener("input", function(){
+    state.studentName = inp.value; saveState();
+    document.querySelectorAll(".studentNameInput").forEach(function(o){ if (o !== inp) o.value = inp.value; });
+  });
+});
+document.querySelectorAll(".submitBtn").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    const t = btn.getAttribute("data-tab");
+    const nameEl = document.getElementById("studentNameInput-" + t);
+    if (!nameEl.value.trim() && state.studentName) nameEl.value = state.studentName;
+    if (!nameEl.value.trim()) { setStatus(t, "Please enter your name before submitting.", "st-err"); nameEl.focus(); return; }
+    const payload = buildSubmissionPayload(t);
+    state.studentName = payload.studentName; saveState();
+    setStatus(t, "Submitting...", "st-info"); btn.disabled = true;
+    fetch(WEBHOOK_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    }).then(function(){
+      setStatus(t, "Submitted successfully! Your teacher has received your results.", "st-ok");
+      setTimeout(function(){ btn.disabled = false; }, 5000);
+    }).catch(function(){
+      setStatus(t, "Network error. Please check your connection or use \"Copy Report (Offline Backup)\".", "st-err");
+      btn.disabled = false;
+    });
+  });
+});
+function copyText(t){
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(t);
+  return new Promise(function(res, rej){
+    const ta = document.createElement("textarea"); ta.value = t; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy") ? res() : rej(); } catch(e) { rej(e); }
+    document.body.removeChild(ta);
+  });
+}
+document.querySelectorAll(".copyBtn").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    const t = btn.getAttribute("data-tab");
+    copyText(payloadToText(buildSubmissionPayload(t))).then(function(){ showToast("✅ Report copied! Paste it to your teacher."); setStatus(t, "Report copied to clipboard.", "st-ok"); })
+    .catch(function(){ setStatus(t, "Could not copy automatically. Please try again.", "st-err"); });
+  });
+});
+document.querySelectorAll(".printBtn").forEach(function(b){ b.addEventListener("click", function(){ window.print(); }); });
+
+loadState(); applyState();
+</script>
+
+<script id="teacherScript">
+(function(){
+  var btn = document.getElementById("teacherBtn");
+  var partB = document.getElementById("partB");
+  if (!btn || !partB) return;
+  btn.addEventListener("click", function(){
+    if (partB.style.display === "block") { partB.style.display = "none"; return; }
+    var code = prompt("Nhập mã giáo viên:");
+    if (code === null) return;
+    if (code.trim() === "GV2026") { partB.style.display = "block"; partB.scrollIntoView({ behavior: "smooth" }); }
+    else alert("Sai mã.");
+  });
+  var dl = document.getElementById("cleanDownloadBtn");
+  if (dl) dl.addEventListener("click", function(){
+    var clone = document.documentElement.cloneNode(true);
+    ["#partB", "#teacherZone", "#teacherScript"].forEach(function(sel){ var el = clone.querySelector(sel); if (el) el.parentNode.removeChild(el); });
+    clone.querySelectorAll("input").forEach(function(i){ i.removeAttribute("checked"); i.removeAttribute("value"); });
+    clone.querySelectorAll("textarea").forEach(function(t){ t.textContent = ""; });
+    clone.querySelectorAll("select").forEach(function(s){ while (s.firstChild) s.removeChild(s.firstChild); });
+    clone.querySelectorAll(".opt.sel").forEach(function(o){ o.classList.remove("sel"); });
+    clone.querySelectorAll(".submission-panel").forEach(function(sp){ sp.classList.remove("ready"); });
+    clone.querySelectorAll(".submitStatus").forEach(function(st){ st.textContent = ""; });
+    var html = "<!DOCTYPE html>\n" + clone.outerHTML;
+    var blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "Mindset1_Task1Review_Task2Prep_HaMy_HocVien.html";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1500);
+  });
+})();
+</script>
+</body>
+</html>
