@@ -134,7 +134,7 @@
 (function(){
 "use strict";
 var DATA = JSON.parse(document.getElementById("app-data").textContent);
-var STORE_KEY = "listening_" + DATA.lessonTitle.replace(/[^A-Za-z0-9]+/g, "_");
+var STORE_KEY = "listening_v3_" + DATA.lessonTitle.replace(/[^A-Za-z0-9]+/g, "_");
 var audio = document.getElementById("mindsetAudio");
 var audio2 = document.getElementById("strictDictationAudio");
 var stopTimer = null;
@@ -443,7 +443,7 @@ function explainBlock(items, onOpen){
   wrap.appendChild(btn); wrap.appendChild(box);
   return { el: wrap, show: function(){ btn.style.display = "inline-block"; }, open: function(){ btn.style.display = "inline-block"; box.style.display = "block"; } };
 }
-function tooManyWrong(n){ return n > (DATA.explainAfterWrong || 2); }
+function tooManyWrong(n){ return n >= (DATA.explainAfterWrong || 2); }
 
 /* ---------- M5b Paraphrase Mapping ---------- */
 function buildM5b(page){
@@ -490,15 +490,20 @@ function buildM5b(page){
   hb.addEventListener("click", function(){ hint.style.display = "block"; st.hintUsed = true; save(); });
   function showAll(){ rightCol.querySelectorAll(".expr").forEach(function(r){ r.querySelector(".etext").textContent = m.pairs[+r.getAttribute("data-pi")].expr; }); }
   function grade(){ var n = 0; sels.forEach(function(s, i){ var ok = s.value === String(i); s.className = ok ? "sel-ok" : "sel-bad"; if (ok) n++; }); if (n === sels.length) showAll(); return n; }
-  chk.addEventListener("click", function(){ touch(); st.attempts++; st.checked = true; var n = grade(); st.score = n; if (n < 5) st.wrong++; fb.className = "fb " + (n === 5 ? "ok" : "bad"); fb.textContent = "Đúng " + n + " / 5." + (n < 5 && tooManyWrong(st.wrong) ? " Bấm 'Giải thích' để xem vì sao." : ""); if (tooManyWrong(st.wrong)) ex.show(); save(); m5bDone(); });
+  chk.addEventListener("click", function(){ touch(); st.attempts++; st.checked = true; var n = grade(); st.score = n; if (n < 5) st.wrong++; if (5 - n >= 2) st.manyWrong = true; var showEx = tooManyWrong(st.wrong) || st.manyWrong; fb.className = "fb " + (n === 5 ? "ok" : "bad"); fb.textContent = "Đúng " + n + " / 5." + (n < 5 && showEx ? " Bấm 'Giải thích' để xem vì sao." : ""); if (showEx) ex.show(); save(); m5bDone(); });
   rv.addEventListener("click", function(){ st.revealed = true; sels.forEach(function(s, i){ s.value = String(i); st.map[i] = String(i); }); grade(); showAll(); fb.className = "fb bad"; fb.textContent = "Đã hiện đáp án. Nghe lại từng câu một lần nữa."; save(); m5bDone(); });
   if (st.hintUsed) hint.style.display = "block";
   if (st.checked || st.revealed) { grade(); if (st.revealed) showAll(); }
-  if (tooManyWrong(st.wrong)) ex.show();
+  if (tooManyWrong(st.wrong) || st.manyWrong) ex.show();
   page.appendChild(c);
 
   var q = el("section", { "class": "card" });
   q.innerHTML = "<h2>Kiểm tra bẫy bắt chữ</h2><p class='muted'>Nghe thấy từ giống nhau ≠ cùng nghĩa. Chọn cẩn thận nhé.</p>";
+  var qexList = [];
+  function mcqBlockCheck(){
+    var wrongQs = m.mcq.filter(function(x, i){ return st.mcq[i] && st.mcq[i].wrong > 0; }).length;
+    if (wrongQs >= 2) qexList.forEach(function(x){ x.show(); });
+  }
   m.mcq.forEach(function(item, qi){
     if (!st.mcq[qi]) st.mcq[qi] = { pick: item.multi ? [] : "", checked: false, attempts: 0, ok: false, wrong: 0 };
     var ms = st.mcq[qi]; if (ms.wrong === undefined) ms.wrong = 0;
@@ -527,12 +532,15 @@ function buildM5b(page){
       if (!ms.ok) ms.wrong++;
       f.className = "fb " + (ms.ok ? "ok" : "bad"); f.textContent = ms.ok ? "✓ Đúng rồi." : "✗ Chưa đúng. Nghe lại nhé." + (tooManyWrong(ms.wrong) ? " Bấm 'Giải thích' để xem vì sao." : "");
       if (tooManyWrong(ms.wrong)) qex.show();
+      mcqBlockCheck();
       save(); m5bDone();
     });
     var qex = explainBlock([item.explain], function(){ ms.explainUsed = true; save(); });
     box.appendChild(cb); box.appendChild(f); box.appendChild(qex.el); q.appendChild(box);
+    qexList.push(qex);
     if (tooManyWrong(ms.wrong)) qex.show();
   });
+  mcqBlockCheck();
   page.appendChild(q);
   nextBtn(page, "Tiếp: Nộp bài →", "t-submit");
   m5bDone();
